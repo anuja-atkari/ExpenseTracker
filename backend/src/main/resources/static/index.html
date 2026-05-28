@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpendWise | Premium Dashboard</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons: Phosphor -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Charts: Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1>SpendWise</h1>
+                <p id="current-month" class="date-subtitle">April 2026</p>
+            </div>
+            <div class="header-right">
+                <button id="open-modal-btn" class="btn-primary">
+                    <i class="ph ph-plus"></i>
+                    Add Transaction
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <section class="stats-grid">
+            <div class="stat-card income">
+                <div class="stat-info">
+                    <span class="stat-label">Income</span>
+                    <h2 class="stat-value">₹<span id="total-income">0</span></h2>
+                </div>
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-trend-up"></i>
+                </div>
+                <div class="stat-progress income-bg"></div>
+            </div>
+
+            <div class="stat-card expense">
+                <div class="stat-info">
+                    <span class="stat-label">Expense</span>
+                    <h2 class="stat-value">₹<span id="total-expense">0</span></h2>
+                </div>
+                <div class="stat-icon-wrapper">
+                    <i class="ph ph-trend-down"></i>
+                </div>
+                <div class="stat-progress expense-bg"></div>
+            </div>
+
+            <div class="stat-card balance">
+                <div class="stat-info">
+                    <span class="stat-label">Balance</span>
+                    <h2 class="stat-value">₹<span id="total-balance">0</span></h2>
+                </div>
+                <div class="stat-balance-pill"></div>
+                <div class="stat-progress balance-bg"></div>
+            </div>
+        </section>
+
+        <!-- Main Content Grid -->
+        <main class="dashboard-grid">
+            <!-- Chart Section -->
+            <div class="dashboard-card chart-section">
+                <div class="card-header">
+                    <h3>Safe to Spend</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="balanceChart"></canvas>
+                    <div class="chart-overlay">
+                        <span class="overlay-label">Balance</span>
+                        <span class="overlay-value">₹<span id="chart-balance">0</span></span>
+                    </div>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <span class="dot income"></span>
+                        <span class="label">Income</span>
+                        <span class="value">₹<span id="legend-income">0</span></span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="dot expense"></span>
+                        <span class="label">Expense</span>
+                        <span class="value">₹<span id="legend-expense">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Section -->
+            <div class="dashboard-card transactions-section">
+                <div class="card-header">
+                    <h3>Recent Transactions</h3>
+                </div>
+                <div class="transactions-container">
+                    <div id="empty-state" class="empty-state">
+                        <i class="ph ph-ghost"></i>
+                        <p>No transactions yet</p>
+                    </div>
+                    <ul id="transaction-list" class="transaction-list">
+                        <!-- Dynamic content here -->
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <!-- Notification Message -->
+        <div id="toast-message" class="toast"></div>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div id="transaction-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Transaction</h3>
+                <button id="close-modal-btn" class="btn-close">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <form id="expense-form" class="transaction-form">
+                <div class="form-group">
+                    <label>Type</label>
+                    <div class="type-selector">
+                        <input type="radio" id="type-expense" name="type" value="EXPENSE" checked>
+                        <label for="type-expense" class="type-btn expense">Expense</label>
+                        
+                        <input type="radio" id="type-income" name="type" value="INCOME">
+                        <label for="type-income" class="type-btn income">Income</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="e.g., Groceries" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">Amount (₹)</label>
+                    <input type="number" id="amount" placeholder="0.00" step="0.01" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" required>
+                        <option value="" disabled selected>Select Category</option>
+                        <option value="Food">Food & Beverages</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Salary">Salary</option>
+                        <option value="Entertainmennt">Entertainment</option>
+                        <option value="Bills">Bills & Utilities</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Date</label>
+                    <input type="date" id="date" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Add Transaction</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal-overlay hidden">
+        <div class="modal-content delete-confirm-content">
+            <div class="delete-icon-wrapper">
+                <i class="ph-fill ph-warning-circle"></i>
+            </div>
+            <h3>Delete Transaction?</h3>
+            <p>Are you sure you want to delete this transaction? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button id="cancel-delete-btn" class="btn-secondary">Cancel</button>
+                <button id="confirm-delete-btn" class="btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
